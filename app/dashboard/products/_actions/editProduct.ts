@@ -7,11 +7,11 @@ import { productSchema } from "@/utils/zodSchemas";
 import { redirect } from "next/navigation";
 import prisma from "@/utils/db";
 
-export async function createProduct(prevState: unknown, formData: FormData) {
+export async function editProduct(prevState: unknown, formData: FormData) {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  if (!user || user === null || !user.id || (await isManager())) {
+  if (!user || user === null || !user.id || !(await isManager())) {
     return redirect("/");
   }
 
@@ -27,17 +27,21 @@ export async function createProduct(prevState: unknown, formData: FormData) {
     urlsString.split(",").map((url) => url.trim())
   );
 
-  await prisma.product.create({
+  const productId = formData.get("productId") as string;
+  await prisma.product.update({
+    where: {
+      id: productId,
+    },
     data: {
       name: parsedData.value.name,
       description: parsedData.value.description,
-      status: parsedData.value.status,
-      price: parsedData.value.price,
-      images: flatenUrls,
       categoryId: parsedData.value.categoryId,
-      isFeatured: parsedData.value.isFeatured,
+      price: parsedData.value.price,
+      isFeatured: parsedData.value.isFeatured === true ? true : false,
+      status: parsedData.value.status,
+      images: flatenUrls,
     },
   });
 
-  return redirect("/dashboard/products");
+  redirect("/dashboard/products");
 }

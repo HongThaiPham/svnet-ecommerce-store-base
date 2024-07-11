@@ -22,13 +22,25 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import prisma from "@/utils/db";
 import { MoreHorizontal, Package, PlusCircle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
 type Props = {};
 
-const ProductsPage: React.FC<Props> = ({}) => {
+async function getData() {
+  const data = await prisma.product.findMany({
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+  return data;
+}
+
+const ProductsPage: React.FC<Props> = async ({}) => {
+  const data = await getData();
   return (
     <>
       <div className="flex items-center justify-end">
@@ -59,30 +71,45 @@ const ProductsPage: React.FC<Props> = ({}) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>
-                  <Package className="w-16 h-16" />
-                </TableCell>
-                <TableCell>Nike Air</TableCell>
-                <TableCell>Active</TableCell>
-                <TableCell>$299.00</TableCell>
-                <TableCell>2024-07-10</TableCell>
-                <TableCell className="text-end">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button asChild variant={"ghost"} size={"icon"}>
-                        <MoreHorizontal className="h-4 w-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
+              {data.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell>
+                    <Image
+                      src={item.images[0]}
+                      alt={item.name}
+                      width={64}
+                      height={64}
+                      className="rounded-md object-cover w-16 h-16"
+                    />
+                  </TableCell>
+                  <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.status}</TableCell>
+                  <TableCell>${item.price}</TableCell>
+                  <TableCell>
+                    {Intl.DateTimeFormat("en-US").format(item.createdAt)}
+                  </TableCell>
+
+                  <TableCell className="text-end">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button asChild variant={"ghost"} size={"icon"}>
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href={`/dashboard/products/${item.id}`}>
+                            Edit
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>Delete</DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </CardContent>

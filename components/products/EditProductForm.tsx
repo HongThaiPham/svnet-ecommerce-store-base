@@ -1,5 +1,8 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import React from "react";
+import { Button } from "../ui/button";
+import Link from "next/link";
+import { ChevronLeft, XIcon } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -7,37 +10,47 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+} from "../ui/card";
+import { Label } from "../ui/label";
+import { Input } from "../ui/input";
+import { Textarea } from "../ui/textarea";
+import { Switch } from "../ui/switch";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { UploadDropzone } from "@/utils/uploadthing";
-import { ChevronLeft, XIcon } from "lucide-react";
-import Link from "next/link";
-import React from "react";
+} from "../ui/select";
 import { useFormState } from "react-dom";
-import { createProduct } from "../_actions/createProduct";
 import { useForm } from "@conform-to/react";
 import { parseWithZod } from "@conform-to/zod";
 import { productSchema } from "@/utils/zodSchemas";
+import { getCategories } from "@/app/dashboard/products/_actions/getCategories";
+import { $Enums } from "@prisma/client";
 import Image from "next/image";
-import { getCategories } from "../_actions/getCategories";
-import ButtonSubmitProductForm from "@/components/products/ButtonSubmitProductForm";
+import { UploadDropzone } from "@/utils/uploadthing";
+import ButtonSubmitProductForm from "./ButtonSubmitProductForm";
+import { editProduct } from "@/app/dashboard/products/_actions/editProduct";
 
-type Props = {};
+type Props = {
+  data: {
+    id: string;
+    name: string;
+    description: string;
+    status: $Enums.ProductStatus;
+    price: number;
+    images: string[];
+    createdAt: Date;
+    categoryId: string;
+    isFeatured: boolean;
+  };
+};
 
-const NewProductPage: React.FC<Props> = ({}) => {
-  const [images, setImages] = React.useState<string[]>([]);
+const EditProductForm: React.FC<Props> = ({ data }) => {
+  const [images, setImages] = React.useState<string[]>(data.images);
   const [categories, setCategories] = React.useState<any[]>([]);
-  const [lastResult, action] = useFormState(createProduct, undefined);
+  const [lastResult, action] = useFormState(editProduct, undefined);
   const [form, fields] = useForm({
     lastResult,
     onValidate({ formData }) {
@@ -56,23 +69,22 @@ const NewProductPage: React.FC<Props> = ({}) => {
       setCategories(data);
     });
   }, []);
-
   return (
     <form id={form.id} onSubmit={form.onSubmit} action={action}>
+      <input type="hidden" value={data.id} name="productId" />
       <div className="flex items-center gap-4">
         <Button variant={"outline"} size={"icon"} asChild>
           <Link href="/dashboard/products">
             <ChevronLeft className="w-4 h-4" />
           </Link>
         </Button>
-        <h1 className="text-xl font-semibold tracking-tight ">New product</h1>
+        <h1 className="text-xl font-semibold tracking-tight ">Edit product</h1>
       </div>
       <Card className="mt-5">
         <CardHeader>
           <CardTitle>Product Details</CardTitle>
           <CardDescription>
-            Add your product details below. Make sure to add a high-quality
-            image and detailed description to attract more customers.
+            Fill in the details of the product you want to edit
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -83,7 +95,7 @@ const NewProductPage: React.FC<Props> = ({}) => {
                 type="text"
                 key={fields.name.key}
                 name={fields.name.name}
-                defaultValue={fields.name.initialValue}
+                defaultValue={data.name}
                 placeholder="Enter product name"
                 className="w-full"
               />
@@ -94,7 +106,7 @@ const NewProductPage: React.FC<Props> = ({}) => {
               <Textarea
                 key={fields.description.key}
                 name={fields.description.name}
-                defaultValue={fields.description.initialValue}
+                defaultValue={data.description}
                 placeholder="Write a detailed description"
               />
               <p className="text-rose-500">{fields.description.errors}</p>
@@ -105,7 +117,7 @@ const NewProductPage: React.FC<Props> = ({}) => {
                 type="number"
                 key={fields.price.key}
                 name={fields.price.name}
-                defaultValue={fields.price.initialValue}
+                defaultValue={data.price}
                 placeholder="$55"
                 className="w-full"
               />
@@ -116,7 +128,7 @@ const NewProductPage: React.FC<Props> = ({}) => {
               <Switch
                 key={fields.isFeatured.key}
                 name={fields.isFeatured.name}
-                defaultValue={fields.isFeatured.initialValue}
+                checked={data.isFeatured}
               />
               <p className="text-rose-500">{fields.isFeatured.errors}</p>
             </div>
@@ -125,7 +137,7 @@ const NewProductPage: React.FC<Props> = ({}) => {
               <Select
                 key={fields.status.key}
                 name={fields.status.name}
-                defaultValue={fields.status.initialValue}
+                defaultValue={data.status}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Status" />
@@ -143,7 +155,7 @@ const NewProductPage: React.FC<Props> = ({}) => {
               <Select
                 key={fields.categoryId.key}
                 name={fields.categoryId.name}
-                defaultValue={fields.categoryId.initialValue}
+                defaultValue={data.categoryId}
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Category" />
@@ -165,7 +177,6 @@ const NewProductPage: React.FC<Props> = ({}) => {
                 value={images}
                 key={fields.images.key}
                 name={fields.images.name}
-                defaultValue={fields.images.initialValue as any}
               />
               {images.length > 0 ? (
                 <div className="flex gap-5">
@@ -205,11 +216,11 @@ const NewProductPage: React.FC<Props> = ({}) => {
           </div>
         </CardContent>
         <CardFooter>
-          <ButtonSubmitProductForm text="New Product" />
+          <ButtonSubmitProductForm text="Save Product" />
         </CardFooter>
       </Card>
     </form>
   );
 };
 
-export default NewProductPage;
+export default EditProductForm;

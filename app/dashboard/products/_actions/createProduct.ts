@@ -11,7 +11,7 @@ export async function createProduct(prevState: unknown, formData: FormData) {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
-  if (!user || user === null || !user.id || (await isManager())) {
+  if (!user || user === null || !user.id || !(await isManager())) {
     return redirect("/");
   }
 

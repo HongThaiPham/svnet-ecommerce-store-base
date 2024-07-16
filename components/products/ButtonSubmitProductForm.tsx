@@ -1,24 +1,26 @@
 "use client";
 import React from "react";
 import { useFormStatus } from "react-dom";
-import { Button } from "../ui/button";
+import { Button, ButtonProps } from "../ui/button";
 import { Loader2 } from "lucide-react";
 
 type Props = {
   text: string;
-};
+} & ButtonProps;
 
-const ButtonSubmitProductForm: React.FC<Props> = ({ text }) => {
+const ButtonSubmitProductForm: React.FC<Props> = ({ text, ...props }) => {
   const { pending } = useFormStatus();
   return (
     <>
       {pending ? (
-        <Button disabled>
+        <Button disabled {...props}>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           Submitting...
         </Button>
       ) : (
-        <Button type="submit">{text}</Button>
+        <Button type="submit" {...props}>
+          {text}
+        </Button>
       )}
     </>
   );

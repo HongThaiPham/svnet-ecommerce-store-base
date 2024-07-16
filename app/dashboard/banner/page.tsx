@@ -88,13 +88,13 @@ const BannerPage: React.FC<Props> = async ({}) => {
                       <DropdownMenuContent align="end">
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem asChild>
-                          <Link href={`/dashboard/banner/${"item.id"}`}>
+                        {/* <DropdownMenuItem asChild>
+                          <Link href={`/dashboard/banner/${item.id}`}>
                             Edit
                           </Link>
-                        </DropdownMenuItem>
+                        </DropdownMenuItem> */}
                         <DropdownMenuItem asChild>
-                          <Link href={`/dashboard/banner/${"item.id"}/delete`}>
+                          <Link href={`/dashboard/banner/${item.id}/delete`}>
                             Delete
                           </Link>
                         </DropdownMenuItem>

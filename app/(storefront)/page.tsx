@@ -1,3 +1,4 @@
+import Hero from "@/components/storefront/Hero";
 import React from "react";
 
 type Props = {};
@@ -5,7 +6,7 @@ type Props = {};
 const HomePage: React.FC<Props> = ({}) => {
   return (
     <div>
-      <h1>Page</h1>
+      <Hero />
     </div>
   );
 };

@@ -9,12 +9,19 @@ import {
 import { ShoppingBag } from "lucide-react";
 import UserDropdowMenu from "./UserDropdowMenu";
 import { Button } from "../ui/button";
+import { redis } from "@/lib/redis";
+import CartType from "@/types/Cart.type";
 
 type Props = {};
 
 const Navbar: React.FC<Props> = async ({}) => {
   const { getUser } = getKindeServerSession();
   const user = await getUser();
+  const cart: CartType | null = await redis.get(`cart:${user?.id}`);
+  const totalQuantity = cart?.items.reduce(
+    (acc, item) => acc + item.quantity,
+    0
+  );
   return (
     <nav className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex items-center justify-between">
       <div className="flex items-center">
@@ -31,7 +38,7 @@ const Navbar: React.FC<Props> = async ({}) => {
             <Link href={"/bag"} className="group p-2 flex items-center mr-2">
               <ShoppingBag className="h-6 w-6 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
               <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
-                8
+                {totalQuantity || 0}
               </span>
             </Link>
             <UserDropdowMenu

@@ -35,7 +35,7 @@ const Navbar: React.FC<Props> = async ({}) => {
       <div className="flex items-center">
         {user ? (
           <>
-            <Link href={"/bag"} className="group p-2 flex items-center mr-2">
+            <Link href={"/cart"} className="group p-2 flex items-center mr-2">
               <ShoppingBag className="h-6 w-6 text-muted-foreground group-hover:text-foreground transition-colors duration-300" />
               <span className="ml-2 text-sm font-medium text-gray-700 group-hover:text-gray-800">
                 {totalQuantity || 0}

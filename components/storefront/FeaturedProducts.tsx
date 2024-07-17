@@ -41,7 +41,6 @@ const FeaturedProducts: React.FC<Props> = async ({}) => {
 async function LoadFeaturedproducts() {
   noStore();
   const data = await getData();
-  console.log(data);
 
   return (
     <div className="mt-5 grid sm:grid-cols-2 lg:grid-cols-3 gap-5">

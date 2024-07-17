@@ -5,6 +5,8 @@ import { unstable_noStore as noStore } from "next/cache";
 import ImageSlider from "@/components/storefront/ImageSlider";
 import { StarIcon } from "lucide-react";
 import FeaturedProducts from "@/components/storefront/FeaturedProducts";
+import addToCart from "../../_actions/addToCart";
+import AddToCartButton from "@/components/products/AddToCartButton";
 
 type Props = {
   params: {
@@ -36,6 +38,7 @@ async function getData(productId: string) {
 const ProductDetailPage: React.FC<Props> = async ({ params }) => {
   noStore();
   const data = await getData(params.id);
+  const addProductToCart = addToCart.bind(null, params.id);
   return (
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start lg:gap-x-24 py-6">
@@ -54,9 +57,9 @@ const ProductDetailPage: React.FC<Props> = async ({ params }) => {
           </div>
           <p className="text-base text-gray-700 mt-6">{data.description}</p>
 
-          {/* <form action={addProducttoShoppingCart}>
-            <ShoppingBagButton />
-          </form> */}
+          <form action={addProductToCart}>
+            <AddToCartButton />
+          </form>
         </div>
       </div>
 

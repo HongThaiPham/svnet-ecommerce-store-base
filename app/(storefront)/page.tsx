@@ -1,4 +1,5 @@
 import CategorySelect from "@/components/storefront/CategorySelect";
+import FeaturedProducts from "@/components/storefront/FeaturedProducts";
 import Hero from "@/components/storefront/Hero";
 import React from "react";
 
@@ -9,6 +10,7 @@ const HomePage: React.FC<Props> = ({}) => {
     <div>
       <Hero />
       <CategorySelect />
+      <FeaturedProducts />
     </div>
   );
 };

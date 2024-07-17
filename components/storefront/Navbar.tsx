@@ -1,8 +1,14 @@
 import Link from "next/link";
 import React from "react";
 import NavbarLinks from "./NavbarLinks";
-import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import {
+  getKindeServerSession,
+  LoginLink,
+  RegisterLink,
+} from "@kinde-oss/kinde-auth-nextjs/server";
 import { ShoppingBag } from "lucide-react";
+import UserDropdowMenu from "./UserDropdowMenu";
+import { Button } from "../ui/button";
 
 type Props = {};
 
@@ -28,8 +34,27 @@ const Navbar: React.FC<Props> = async ({}) => {
                 8
               </span>
             </Link>
+            <UserDropdowMenu
+              email={user.email ?? ""}
+              name={user.username ?? ""}
+              avatar={
+                user.picture ?? `https://avatar.vercel.sh/${user.given_name}`
+              }
+            />
           </>
-        ) : null}
+        ) : (
+          <>
+            <div className="hidden md:flex md:flex-1 md:items-center md:justify-end md:space-x-2">
+              <Button asChild variant={"ghost"}>
+                <LoginLink>Sign in</LoginLink>
+              </Button>
+              <span className="h-6 w-px bg-gray-200"></span>
+              <Button asChild variant={"ghost"}>
+                <RegisterLink>Create Account</RegisterLink>
+              </Button>
+            </div>
+          </>
+        )}
       </div>
     </nav>
   );

@@ -27,7 +27,7 @@ async function getData() {
   return data;
 }
 
-const FeaturedProducts: React.FC<Props> = async ({}) => {
+const FeaturedProducts: React.FC<Props> = ({}) => {
   return (
     <>
       <h2 className="text-2xl font-extrabold tracking-tight">Featured Items</h2>

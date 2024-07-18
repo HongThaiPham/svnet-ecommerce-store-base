@@ -13,11 +13,38 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import prisma from "@/utils/db";
 import React from "react";
+import { unstable_noStore as noStore } from "next/cache";
 
 type Props = {};
 
-const OrdersPage: React.FC<Props> = ({}) => {
+async function getData() {
+  const data = await prisma.order.findMany({
+    select: {
+      amount: true,
+      createdAt: true,
+      status: true,
+      id: true,
+      User: {
+        select: {
+          firstName: true,
+          email: true,
+          profileImage: true,
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  return data;
+}
+
+const OrdersPage: React.FC<Props> = async ({}) => {
+  noStore();
+  const data = await getData();
   return (
     <Card>
       <CardHeader className="px-7">
@@ -36,18 +63,24 @@ const OrdersPage: React.FC<Props> = ({}) => {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow>
-              <TableCell>
-                <p className="font-medium">Leo Pham</p>
-                <p className="hidden md:flex text-sm text-muted-foreground">
-                  dev@svnet.dev
-                </p>
-              </TableCell>
-              <TableCell>Sale</TableCell>
-              <TableCell>Successfully</TableCell>
-              <TableCell>2024-07-10</TableCell>
-              <TableCell className="text-right">$100.00</TableCell>
-            </TableRow>
+            {data.map((item) => (
+              <TableRow key={item.id}>
+                <TableCell>
+                  <p className="font-medium">{item.User?.firstName}</p>
+                  <p className="hidden md:flex text-sm text-muted-foreground">
+                    {item.User?.email}
+                  </p>
+                </TableCell>
+                <TableCell>Order</TableCell>
+                <TableCell>{item.status}</TableCell>
+                <TableCell>
+                  {new Intl.DateTimeFormat("en-US").format(item.createdAt)}
+                </TableCell>
+                <TableCell className="text-right">
+                  ${new Intl.NumberFormat("en-US").format(item.amount / 100)}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </CardContent>

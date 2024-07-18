@@ -1,17 +1,15 @@
 import prisma from "@/utils/db";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
+import { NextResponse } from "next/server";
+import { unstable_noStore as noStore } from "next/cache";
 
 export async function GET() {
+  noStore();
   const { getUser } = getKindeServerSession();
   const user = await getUser();
 
   if (!user || user === null || !user.id) {
-    return {
-      status: 401,
-      body: {
-        message: "Unauthorized",
-      },
-    };
+    throw new Error("Something went wrong...");
   }
 
   const dbUser = await prisma.user.findUnique({
@@ -33,7 +31,7 @@ export async function GET() {
     });
   }
 
-  return Response.redirect(
+  return NextResponse.redirect(
     process.env.NODE_ENV !== "production"
       ? "http://localhost:3000"
       : process.env.NEXT_PUBLIC_BASE_URL!

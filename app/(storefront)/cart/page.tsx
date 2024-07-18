@@ -10,6 +10,8 @@ import { redirect } from "next/navigation";
 import React from "react";
 import removeFromCart from "../_actions/removeFromCart";
 import RemoveFromCartButton from "@/components/products/RemoveFromCartButton";
+import checkout from "../_actions/checkout";
+import ButtonSubmitProductForm from "@/components/products/ButtonSubmitProductForm";
 
 type Props = {};
 
@@ -79,9 +81,12 @@ const CartPage: React.FC<Props> = async ({}) => {
               <p>${new Intl.NumberFormat("en-US").format(totalPrice)}</p>
             </div>
 
-            {/* <form action={checkOut}>
-              <ChceckoutButton />
-            </form> */}
+            <form action={checkout}>
+              <ButtonSubmitProductForm
+                text={"Checkout"}
+                className="w-full mt-5"
+              />
+            </form>
           </div>
         </div>
       )}

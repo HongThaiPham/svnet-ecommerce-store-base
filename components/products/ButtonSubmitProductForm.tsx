@@ -15,7 +15,7 @@ const ButtonSubmitProductForm: React.FC<Props> = ({ text, ...props }) => {
       {pending ? (
         <Button disabled {...props}>
           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-          Submitting...
+          Processing ...
         </Button>
       ) : (
         <Button type="submit" {...props}>
